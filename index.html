@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- ===== À CHANGER POUR CHAQUE PAYS ===== -->
+<title>FIZA HEALTHCARE CIV</title>
+<meta name="apple-mobile-web-app-title" content="FIZA CIV">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ffffff">
+<style>
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:#f6f6f4;color:#1f1f1e;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px}
+img{width:96px;height:96px;border-radius:20px}
+a{color:#1a73e8}
+</style>
+</head>
+<body>
+<div>
+  <img src="icon-512.png" alt="FIZA HEALTHCARE CIV">
+  <p>Ouverture de l'application…</p>
+  <p><a id="lien" href="#">Ouvrir l'application</a></p>
+</div>
+<script>
+/* ===== CONFIGURATION DU PAYS : seule partie à modifier ===== */
+const APP_URL = 'https://script.google.com/macros/s/VOTRE_ID_DEPLOIEMENT/exec';
+/* ========================================================== */
+
+// Le lien personnel (?t=...) est transmis tel quel à l'application
+const t = new URLSearchParams(location.search).get('t') || '';
+const cible = APP_URL + (t ? '?t=' + encodeURIComponent(t) : '');
+document.getElementById('lien').href = cible;
+location.replace(cible);
+</script>
+</body>
+</html>
