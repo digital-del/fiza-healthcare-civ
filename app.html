@@ -6,7 +6,7 @@
 <title>FIZA HEALTHCARE CIV</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="FIZA CIV">
-<link rel="apple-touch-icon" href="https://digital-del.github.io/fiza-healthcare-civ/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="https://digital-del.github.io/fiza-healthcare-civ/apple-touch-icon-2.png">
 <link rel="icon" type="image/png" sizes="192x192" href="https://digital-del.github.io/fiza-healthcare-civ/icon-192.png">
 <style>
 :root{--s1:#fff;--s2:#f6f6f4;--tx:#1f1f1e;--tx2:#5f5e5a;--bd:#e4e3dd;--bd2:#c3c2b7;--acc:#1a73e8;--accbg:#e8f0fe;--ok:#137333;--okbg:#e6f4ea;--ko:#b00020;--kobg:#fce8ea;--warn:#8a5a00;--A:#2e7d32;--B:#1565c0;--C:#ef6c00}
@@ -90,6 +90,7 @@ svg text{fill:var(--tx2)}
 const JETON=(new URLSearchParams(location.search).get('t')||'').replace(/[^A-Za-z0-9]/g,'').slice(0,64);
 const URL_API='https://script.google.com/macros/s/AKfycbxkh4rNHm_yFXPW5WI9wJ0-anyZrcdfd1RipbJPH1cFdNdH5wT3BieIJCWOEMwlmNDY8w/exec';
 let LOGO='';
+function majLogo(){const z=document.getElementById('logo-zone');if(z)z.innerHTML=logoHtml()}
 function logoHtml(){
   return LOGO?`<img src="${h(LOGO)}" alt="Logo" style="display:block;height:48px;max-width:70%;object-fit:contain;margin:6px auto 4px">`:'';
 }
@@ -177,7 +178,7 @@ function ecran(html,vue){
     <span class="mu">${h(S.nom)} · ${h(roleLib())}</span>
     <button class="btn sec inl" style="margin:0;padding:4px 8px" onclick="deconnexion()">Se déconnecter</button></div>
     ${S.saisie?'':`<div class="msg warn">${h(S.msgSaisie)}</div>`}`:'';
-  document.getElementById('app').innerHTML=`<div class="wrap">${logoHtml()}${bandeau}<div id="msg"></div>${html}</div>${S.sess?barre(vue):''}`;
+  document.getElementById('app').innerHTML=`<div class="wrap"><div id="logo-zone">${logoHtml()}</div>${bandeau}<div id="msg"></div>${html}</div>${S.sess?barre(vue):''}`;
 }
 /* Icônes de la barre du bas (trait fin, couleur héritée du bouton) */
 const ICONES={
@@ -268,9 +269,10 @@ function deconnexion(){DERNIER={};S.sess='';S.role='';S.pres=[];effacerSession()
 /* ============ Connexion ============ */
 async function demarrer(){
   const LOGO_SECOURS='https://digital-del.github.io/fiza-healthcare-civ/logo.png';
-  const logo=rpc('getLogo').then(s=>{LOGO=s||LOGO_SECOURS}).catch(()=>{LOGO=LOGO_SECOURS});
+  LOGO=LOGO_SECOURS;
+  rpc('getLogo').then(s=>{LOGO=s||LOGO_SECOURS;majLogo()}).catch(()=>{});
   try{
-    const [r]=await Promise.all([rpc('getRoleLien',JETON),logo]);
+    const r=await rpc('getRoleLien',JETON);
     if(!r.role){ecran(`<h1>FIZA HEALTHCARE CIV</h1><div class="msg err">Ce lien n'est plus valide. Demandez un nouveau lien à l'administrateur.</div>`,'');return}
     const sv=lireSessionSauvee();
     DIAG='Stockage navigateur : '+(stockageOk()?'disponible':'bloqué')+' · session mémorisée : '+(sv?'oui':'non');
