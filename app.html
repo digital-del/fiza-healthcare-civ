@@ -60,7 +60,7 @@ th:first-child,td:first-child{text-align:left}
   .wrap{max-width:1180px}
   .grille{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
-.haut{position:fixed;right:16px;bottom:76px;width:42px;height:42px;border-radius:50%;border:.5px solid var(--bd2);background:var(--s1);color:var(--tx);font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none;z-index:6}
+.haut{position:fixed;right:16px;bottom:150px;width:42px;height:42px;border-radius:50%;border:.5px solid var(--bd2);background:var(--s1);color:var(--tx);font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none;z-index:6}
 .haut.on{display:block}
 .msg{padding:9px;border-radius:8px;font-size:14px;margin:8px 0}
 .msg.err{background:var(--kobg);color:var(--ko)}
@@ -84,7 +84,7 @@ svg text{fill:var(--tx2)}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"><div style="padding:60px 20px;text-align:center;color:#5f5e5a;font-family:system-ui,Arial,sans-serif;font-size:15px">Chargement…</div></div>
 <button id="haut" class="haut" aria-label="Revenir en haut" onclick="allerHaut()">&#8593;</button>
 <script>
 const JETON=(new URLSearchParams(location.search).get('t')||'').replace(/[^A-Za-z0-9]/g,'').slice(0,64);
@@ -954,6 +954,17 @@ setInterval(async()=>{
     if(st.saisieGlobale!==S.saisieGlobale||st.saisieOuverte!==S.saisie){S.saisie=st.saisieOuverte;S.saisieGlobale=st.saisieGlobale;S.msgSaisie=st.message;rendre()}
   }catch(e){}
 },120000);
+/* Glisser vers le bas depuis le haut de la page (au moins 120 px) : actualise l'application */
+(function(){
+  let y0=null;
+  window.addEventListener('touchstart',e=>{y0=(window.scrollY||0)<=0?e.touches[0].clientY:null},{passive:true});
+  window.addEventListener('touchend',e=>{
+    if(y0===null)return;
+    const distance=e.changedTouches[0].clientY-y0;
+    y0=null;
+    if(distance>=120)location.reload();
+  },{passive:true});
+})();
 demarrer();
 </script>
 </body>
