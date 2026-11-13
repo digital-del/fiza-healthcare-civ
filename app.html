@@ -267,7 +267,8 @@ function deconnexion(){DERNIER={};S.sess='';S.role='';S.pres=[];effacerSession()
 
 /* ============ Connexion ============ */
 async function demarrer(){
-  const logo=rpc('getLogo').then(s=>{LOGO=s||''}).catch(()=>{});
+  const LOGO_SECOURS='https://digital-del.github.io/fiza-healthcare-civ/logo.png';
+  const logo=rpc('getLogo').then(s=>{LOGO=s||LOGO_SECOURS}).catch(()=>{LOGO=LOGO_SECOURS});
   try{
     const [r]=await Promise.all([rpc('getRoleLien',JETON),logo]);
     if(!r.role){ecran(`<h1>FIZA HEALTHCARE CIV</h1><div class="msg err">Ce lien n'est plus valide. Demandez un nouveau lien à l'administrateur.</div>`,'');return}
