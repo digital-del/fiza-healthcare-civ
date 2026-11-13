@@ -26,6 +26,7 @@ a{color:#1a73e8}
 </div>
 <script>
 /* ===== CONFIGURATION DU PAYS : seule partie à modifier ===== */
+/* Adresse /exec du déploiement en cours (Déployer → Gérer les déploiements) */
 const APP_URL = 'https://script.google.com/macros/s/AKfycbxkh4rNHm_yFXPW5WI9wJ0-anyZrcdfd1RipbJPH1cFdNdH5wT3BieIJCWOEMwlmNDY8w/exec';
 /* ========================================================== */
 
@@ -33,7 +34,8 @@ const APP_URL = 'https://script.google.com/macros/s/AKfycbxkh4rNHm_yFXPW5WI9wJ0-
 const t = new URLSearchParams(location.search).get('t') || '';
 const cible = APP_URL + (t ? '?t=' + encodeURIComponent(t) : '');
 document.getElementById('lien').href = cible;
-location.replace(cible);
+// Sans jeton, on n'ouvre pas l'application : l'icône d'accueil affiche la page d'attente
+if (t) location.replace(cible);
 </script>
 </body>
 </html>
