@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>FIZA HEALTHCARE CIV</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FIZA CIV">
+<link rel="apple-touch-icon" href="https://digital-del.github.io/fiza-healthcare-civ/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://digital-del.github.io/fiza-healthcare-civ/icon-192.png">
+<style>
+:root{--s1:#fff;--s2:#f6f6f4;--tx:#1f1f1e;--tx2:#5f5e5a;--bd:#e4e3dd;--bd2:#c3c2b7;--acc:#1a73e8;--accbg:#e8f0fe;--ok:#137333;--okbg:#e6f4ea;--ko:#b00020;--kobg:#fce8ea;--warn:#8a5a00;--A:#2e7d32;--B:#1565c0;--C:#ef6c00}
+@media (prefers-color-scheme:dark){:root{--s1:#1c1c1b;--s2:#141413;--tx:#f0efec;--tx2:#b4b3a8;--bd:#383835;--bd2:#52514e;--acc:#8ab4f8;--accbg:#1d3557;--ok:#81c995;--okbg:#17321f;--ko:#f28b82;--kobg:#3a1518;--warn:#fdd663;--A:#81c995;--B:#8ab4f8;--C:#fcad70}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;color:var(--tx);background:var(--s2)}
+.wrap{max-width:460px;margin:0 auto;padding:12px 12px 90px}
+h1{font-size:19px;font-weight:500;margin:6px 0 10px}
+h2{font-size:16px;font-weight:500;margin:16px 0 6px}
+.card{background:var(--s1);border:.5px solid var(--bd);border-radius:10px;padding:12px;margin-bottom:10px}
+.it{background:var(--s1);border:.5px solid var(--bd);border-radius:10px;padding:10px;margin-bottom:6px;cursor:pointer}
+.it.on{border:1.5px solid var(--acc);background:var(--accbg)}
+.it small{display:block;color:var(--tx2);font-size:13px;margin-top:2px}
+.mu{color:var(--tx2);font-size:13px}
+div.mu{margin:4px 0}
+.btn{display:block;width:100%;border:0;border-radius:8px;background:var(--acc);color:#fff;padding:11px;font-size:15px;cursor:pointer;margin-top:8px}
+.btn.sec{background:transparent;color:var(--acc);border:.5px solid var(--acc)}
+.btn.ok{background:var(--ok)}
+.btn.ko{background:var(--ko)}
+.btn.inl{display:inline-block;width:auto;padding:7px 14px;margin:6px 6px 0 0}
+.btn:disabled{opacity:.5;cursor:default}
+input,select{width:100%;height:40px;border:.5px solid var(--bd2);border-radius:8px;background:var(--s1);color:var(--tx);font-size:15px;padding:0 10px;margin:2px 0 8px}
+select{padding:0 6px}
+label.l{display:block;font-size:12px;color:var(--tx2);margin-top:4px}
+.chg{border:1.5px solid var(--acc)!important}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.st{background:var(--s2);border:.5px solid var(--bd);border-radius:8px;padding:8px;text-align:center}
+.st b{display:block;font-size:20px;font-weight:500}
+.st span{font-size:12px;color:var(--tx2)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:5px 3px;text-align:center;border-bottom:.5px solid var(--bd)}
+th:first-child,td:first-child{text-align:left}
+.bar{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:.5px solid var(--bd);display:flex;padding:4px 0 calc(4px + env(safe-area-inset-bottom));z-index:5}
+.bar button{flex:1;background:none;border:0;color:var(--tx2);font-size:12px;padding:6px 2px;cursor:pointer}
+.bar button.on{color:var(--acc);font-weight:500}
+.grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.grille .it{margin:0}
+@media (max-width:420px){.grille{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:300px){.grille{grid-template-columns:minmax(0,1fr)}}
+.st-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.cal{max-width:420px}
+@media (min-width:700px){
+  .wrap{max-width:900px;padding:20px 24px 90px}
+  h1{font-size:24px}
+  .st-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .grille{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .bar{justify-content:center}
+  .bar button{flex:0 0 140px}
+}
+@media (min-width:1100px){
+  .wrap{max-width:1180px}
+  .grille{grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+.haut{position:fixed;right:16px;bottom:76px;width:42px;height:42px;border-radius:50%;border:.5px solid var(--bd2);background:var(--s1);color:var(--tx);font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none;z-index:6}
+.haut.on{display:block}
+.msg{padding:9px;border-radius:8px;font-size:14px;margin:8px 0}
+.msg.err{background:var(--kobg);color:var(--ko)}
+.msg.ok{background:var(--okbg);color:var(--ok)}
+.msg.warn{background:var(--accbg);color:var(--warn)}
+.seg{display:flex;border:.5px solid var(--bd2);border-radius:9px;overflow:hidden;margin:8px 0}
+.seg button{flex:1;border:0;background:var(--s2);color:var(--tx);padding:8px;font-size:14px;cursor:pointer}
+.seg button.on{background:var(--acc);color:#fff}
+.cal{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.cal button{border:.5px solid var(--bd);background:var(--s1);color:var(--tx);border-radius:8px;padding:9px 0;font-size:14px;cursor:pointer}
+.cal button.sel{background:var(--acc);color:#fff;border-color:var(--acc)}
+.cal .lb{text-align:center;font-size:12px;color:var(--tx2)}
+.pill{display:inline-block;font-size:11px;border-radius:8px;padding:1px 8px;margin-right:6px}
+.pm{background:var(--accbg);color:var(--acc)}
+.pa{background:var(--okbg);color:var(--ok)}
+.ps{background:var(--kobg);color:var(--ko)}
+.cr{background:var(--s2);border-radius:8px;padding:8px}
+.ln{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:5px 0;border-bottom:.5px solid var(--bd)}
+.ln span{color:var(--tx2)}
+svg text{fill:var(--tx2)}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<button id="haut" class="haut" aria-label="Revenir en haut" onclick="allerHaut()">&#8593;</button>
+<script>
+const JETON=(new URLSearchParams(location.search).get('t')||'').replace(/[^A-Za-z0-9]/g,'').slice(0,64);
+const URL_API='https://script.google.com/macros/s/AKfycbxkh4rNHm_yFXPW5WI9wJ0-anyZrcdfd1RipbJPH1cFdNdH5wT3BieIJCWOEMwlmNDY8w/exec';
+let LOGO='';
+function logoHtml(){
+  return LOGO?`<img src="${h(LOGO)}" alt="Logo" style="display:block;height:48px;max-width:70%;object-fit:contain;margin:6px auto 4px">`:'';
+}
+const MOIS=['Janv','Févr','Mars','Avr','Mai','Juin','Juil','Août','Sept','Oct','Nov','Déc'];
+const MOIS_LONG=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const JOURS=['Lu','Ma','Me','Je','Ve'];
+const LIB={nom:'Nom',zone:'Zone',spec:'Spécialité',classe:'Classe',hop:'Hôpital',produits:'Produits',tel:'Téléphone',anniv:'Anniversaire'};
+const CHAMPS_FORM=['nom','zone','spec','classe','hop','tel','produits','anniv'];
+const S={sess:'',role:'',nom:'',cle:'',annees:[],annee:new Date().getFullYear(),version:'',saisie:true,msgSaisie:'',
+  mois:new Date().getMonth(),choixCle:'',supChoisi:'',sups:[],pres:[],nbDem:0,fiche:null,cal:[],calCtx:null,
+  mode:'AJOUT',modifId:'',vue:'accueil',demandes:[]};
+
+let DERNIER={};
+
+/* Affiche tout de suite la dernière donnée connue de l'onglet, puis rafraîchit.
+   Si la donnée fraîche est identique, rien n'est redessiné (les saisies en cours sont conservées). */
+async function afficherVue(vue,charger,rendre){
+  S.vue=vue;
+  const avant=DERNIER[vue];
+  const erreurAffichage=e=>ecran(`<div class="msg err">Erreur d'affichage : ${h(e&&e.message||e)}</div>`,vue);
+  try{
+    if(avant!==undefined)rendre(avant);
+    else ecran('<h1>Chargement…</h1><div class="mu">Un instant…</div>',vue);
+  }catch(e){erreurAffichage(e)}
+  let d;
+  try{d=await charger()}catch(e){if(S.vue===vue)alerte(e.message||'Erreur de chargement.');return}
+  DERNIER[vue]=d;
+  if(S.vue!==vue)return;
+  if(avant===undefined||JSON.stringify(avant)!==JSON.stringify(d)){
+    try{rendre(d)}catch(e){erreurAffichage(e)}
+  }
+}
+
+/* ============ Utilitaires ============ */
+const p2=n=>String(n).padStart(2,'0');
+const up=x=>String(x||'').toUpperCase();
+function h(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function nbDates(v){return String(v||'').split(';').map(s=>s.trim()).filter(Boolean)}
+function sum(a){return a.reduce((x,y)=>x+y,0)}
+function jj(iso){return String(+iso.slice(8,10))}
+function lundi(iso){const [y,m,d]=iso.split('-').map(Number);const dt=new Date(Date.UTC(y,m-1,d));dt.setUTCDate(dt.getUTCDate()-((dt.getUTCDay()+6)%7));return dt.toISOString().slice(0,10)}
+function joursOuvres(annee,m){const n=new Date(Date.UTC(annee,m+1,0)).getUTCDate(),out=[];
+  for(let j=1;j<=n;j++){const js=new Date(Date.UTC(annee,m,j)).getUTCDay();if(js>0&&js<6)out.push(annee+'-'+p2(m+1)+'-'+p2(j))}return out}
+function semainesMois(annee,m){const map={};joursOuvres(annee,m).forEach(iso=>{const k=lundi(iso);(map[k]=map[k]||[]).push(iso)});
+  return Object.keys(map).sort().map(k=>({cle:k,jours:map[k]}))}
+function joursAvant(ddmm){const jj0=+ddmm.slice(0,2),mm=+ddmm.slice(3,5);const t=new Date();
+  const today=Date.UTC(t.getFullYear(),t.getMonth(),t.getDate());let n=Date.UTC(t.getFullYear(),mm-1,jj0);
+  if(n<today)n=Date.UTC(t.getFullYear()+1,mm-1,jj0);return Math.round((n-today)/86400000)}
+function parseAnniv(a){const m=/^(\d{2})\/(\d{2})$/.exec(a||'');return m?[+m[1],+m[2]]:[0,0]}
+function roleLib(){return {admin:'Administrateur',superviseur:'Superviseur',delegue:'Délégué'}[S.role]||''}
+function cleCible(){return S.role==='delegue'?S.cle:S.choixCle}
+function libelleDelegue(){if(S.role==='delegue')return S.nom;if(!S.choixCle)return 'Tous les délégués';
+  const p=S.pres.find(x=>x.cle===S.choixCle);return p?p.delegue:S.choixCle}
+function filtrer(rows){if(S.role==='delegue'||!S.choixCle)return rows;return rows.filter(p=>p.cle===S.choixCle)}
+function periode(){return S.mois<0?'Année '+S.annee:MOIS_LONG[S.mois]+' '+S.annee}
+
+/* ============ Session conservée dans le navigateur (une par lien) ============ */
+function sauverSession(){try{localStorage.setItem('fiza:'+JETON,S.sess)}catch(e){}}
+function lireSessionSauvee(){try{return localStorage.getItem('fiza:'+JETON)||''}catch(e){return ''}}
+function effacerSession(){try{localStorage.removeItem('fiza:'+JETON)}catch(e){}}
+let DIAG='';
+function stockageOk(){try{localStorage.setItem('fiza:test','1');localStorage.removeItem('fiza:test');return true}catch(e){return false}}
+
+/* ============ Communication avec le serveur ============ */
+function rpc(fn,...a){
+  return fetch(URL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({fn:fn,args:a})})
+    .then(r=>r.json())
+    .then(r=>{
+      if(r.ok)return r.value;
+      const m=String(r.error||'Erreur');
+      if(m.indexOf('SESSION_EXPIREE')>=0){S.sess='';S.role='';effacerSession();ecranConnexion('Votre session a expiré. Demandez un nouveau code.')}
+      throw new Error(m);
+    });
+}
+async function chargerTout(){
+  const [pres,st,nb]=await Promise.all([rpc('getPrescripteurs',S.sess,S.annee,''),rpc('getStatutSaisie',S.sess),rpc('compterDemandesEnAttente',S.sess)]);
+  S.pres=pres;S.saisie=st.saisieOuverte;S.saisieGlobale=st.saisieGlobale;S.msgSaisie=st.message;S.nbDem=nb;
+  S.sups=[...new Set(S.pres.map(p=>p.sup).filter(Boolean))].sort();
+}
+async function rafraichir(f){try{await chargerTout();f()}catch(e){alerte(e.message)}}
+
+/* ============ Cadre commun ============ */
+function ecran(html,vue){
+  const bandeau=S.sess?`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:4px 0 6px">
+    <span class="mu">${h(S.nom)} · ${h(roleLib())}</span>
+    <button class="btn sec inl" style="margin:0;padding:4px 8px" onclick="deconnexion()">Se déconnecter</button></div>
+    ${S.saisie?'':`<div class="msg warn">${h(S.msgSaisie)}</div>`}`:'';
+  document.getElementById('app').innerHTML=`<div class="wrap">${logoHtml()}${bandeau}<div id="msg"></div>${html}</div>${S.sess?barre(vue):''}`;
+}
+/* Icônes de la barre du bas (trait fin, couleur héritée du bouton) */
+const ICONES={
+  accueil:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',
+  equipe:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.3 3.2-5.5 6.5-5.5s5.9 2.2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.6c2.6.2 4.5 2.1 5 4.9"/>',
+  pres:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.2 2 8 6"/>',
+  dem:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 14l2 2 4-4"/>',
+  com:'<path d="M4 5h16v11H8l-4 4z"/>',
+  for:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/>'
+};
+function icone(k){
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;margin:0 auto 2px">${ICONES[k]||''}</svg>`;
+}
+function barre(v){
+  const it=[['accueil','Accueil','ecranAccueil()']];
+  if(S.role!=='delegue')it.push(['equipe','Équipe','ecranEquipe()']);
+  it.push(['pres','Prescripteurs','ecranPres()'],['dem','Demandes ('+S.nbDem+')','ecranDemandes()'],['com','Communications','ecranCommunications()']);
+  const visibles=it.slice(0,4), extra=it.slice(4);
+  const bouton=x=>`<button class="${x[0]===v?'on':''}" onclick="${x[2]}">${icone(x[0])}${x[1]}</button>`;
+  const plus=extra.length?`<button onclick="ouvrirPlus()">${iconePlus()}Plus</button>`:'';
+  return `<nav class="bar">${visibles.map(bouton).join('')}${plus}</nav>${extra.length?panneauPlus(extra):''}`;
+}
+function iconePlus(){
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;margin:0 auto 2px"><path d="M4 6h10M4 12h10M4 18h10"/><path d="M17 9l3 3-3 3"/></svg>`;
+}
+function panneauPlus(extra){
+  return `<div id="plus" onclick="fermerPlus()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9">
+    <div onclick="event.stopPropagation()" style="position:absolute;bottom:64px;right:12px;background:var(--s1);border:.5px solid var(--bd);border-radius:10px;padding:6px;min-width:200px">
+    ${extra.map(x=>`<button onclick="fermerPlus();${x[2]}" style="display:block;width:100%;text-align:left;background:none;border:0;padding:10px;font-size:15px;color:var(--tx);cursor:pointer">${x[1]}</button>`).join('')}
+    </div></div>`;
+}
+function ouvrirPlus(){const p=document.getElementById('plus');if(p)p.style.display='block'}
+function fermerPlus(){const p=document.getElementById('plus');if(p)p.style.display='none'}
+
+/* Bouton d'ouverture et de fermeture de la saisie des visites (administrateur seulement) */
+function blocSaisie(){
+  if(S.role!=='admin')return '';
+  const ouverte=!!S.saisieGlobale;
+  return `<div class="card" style="background:var(--accbg)"><b style="font-weight:500">Saisie des visites</b>
+    <div class="mu">${ouverte?'Ouverte : délégués et superviseurs peuvent enregistrer leurs visites.':'Fermée : consultation seule.'}</div>
+    <button class="btn ${ouverte?'ko':'ok'}" onclick="basculerSaisie(${!ouverte})">${ouverte?'Fermer la saisie':'Ouvrir la saisie'}</button>
+    <button class="btn sec" onclick="ouvrirSaisieDelegues()">Saisie par délégué</button><div id="saisieDel"></div></div>`;
+}
+async function basculerSaisie(ouvert){
+  try{
+    const r=await rpc('setSaisieOuverte',S.sess,ouvert);
+    S.saisie=r.saisieOuverte;S.saisieGlobale=r.saisieOuverte;S.msgSaisie=r.message;
+    rendre();
+    alerte(ouvert?'Saisie des visites ouverte.':'Saisie des visites fermée.','ok');
+  }catch(e){alerte(e.message)}
+}
+
+/* Fermeture ou ouverture de la saisie pour un délégué précis (administrateur) */
+async function ouvrirSaisieDelegues(){
+  const zone=document.getElementById('saisieDel');
+  if(zone&&zone.innerHTML.trim()){zone.innerHTML='';return}
+  await chargerSaisieDelegues();
+}
+async function chargerSaisieDelegues(){
+  try{
+    const r=await rpc('getSaisieDelegues',S.sess);
+    const lignes=r.liste.map(x=>`<div class="ln"><span>${h(x.nom)} (${h(x.role)})${x.ferme?' · fermée':''}</span>
+      <button class="btn inl ${x.ferme?'ok':'ko'}" onclick="basculerSaisieDelegue('${h(x.cle)}',${x.ferme})">${x.ferme?'Ouvrir':'Fermer'}</button></div>`).join('');
+    document.getElementById('saisieDel').innerHTML=`<div style="margin-top:8px">${lignes||'<div class="mu">Aucun délégué.</div>'}</div>`;
+  }catch(e){alerte(e.message)}
+}
+async function basculerSaisieDelegue(cle,estFerme){
+  try{
+    await rpc('setSaisieDelegue',S.sess,cle,!estFerme);
+    await chargerSaisieDelegues();
+    alerte(estFerme?'Saisie ouverte pour '+cle+'.':'Saisie fermée pour '+cle+'.','ok');
+  }catch(e){alerte(e.message)}
+}
+
+/* Liste déroulante de la rubrique : Communications ou Forfaits */
+function selComFor(v){
+  return `<label class="l">Rubrique</label><select onchange="allerComFor(this.value)">
+    <option value="com" ${v==='com'?'selected':''}>Communications</option>
+    <option value="for" ${v==='for'?'selected':''}>Forfaits</option></select>`;
+}
+function allerComFor(v){ if(v==='for')ecranForfaits(); else ecranCommunications(); }
+
+function alerte(t,type){const m=document.getElementById('msg');
+  if(m)m.innerHTML=`<div class="msg ${type||'err'}">${h(t)}</div>`;else window.alert(t)}
+function rendre(){VUES[S.vue]()}
+function deconnexion(){DERNIER={};S.sess='';S.role='';S.pres=[];effacerSession();ecranConnexion()}
+
+/* ============ Connexion ============ */
+async function demarrer(){
+  const logo=rpc('getLogo').then(s=>{LOGO=s||''}).catch(()=>{});
+  try{
+    const [r]=await Promise.all([rpc('getRoleLien',JETON),logo]);
+    if(!r.role){ecran(`<h1>FIZA HEALTHCARE CIV</h1><div class="msg err">Ce lien n'est plus valide. Demandez un nouveau lien à l'administrateur.</div>`,'');return}
+    const sv=lireSessionSauvee();
+    DIAG='Stockage navigateur : '+(stockageOk()?'disponible':'bloqué')+' · session mémorisée : '+(sv?'oui':'non');
+    if(sv){
+      S.sess=sv;
+      try{await ouvrirAccueil();return}catch(e){DIAG+=' · refus du serveur : '+e.message;S.sess='';effacerSession()}
+    }
+    ecranConnexion();
+    alerte(DIAG,'warn');
+  }catch(e){ecran(`<h1>FIZA HEALTHCARE CIV</h1><div class="msg err">${h(e.message)}</div>`,'')}
+}
+function ecranConnexion(msg){
+  S.sess='';DERNIER={};
+  ecran(`<h1>Connexion</h1>
+  <div class="card"><b style="font-weight:500">Votre mission : saisir vos visites</b>
+    <ol class="mu" style="padding-left:18px;margin:6px 0">
+      <li>Touchez « Recevoir mon code » : un code à 6 chiffres arrive sur votre e-mail (valable 10 minutes).</li>
+      <li>Consultez votre tableau de bord.</li>
+      <li>Ouvrez « Prescripteurs », puis un médecin.</li>
+      <li>Touchez un mois, cochez le jour de la visite (lundi à vendredi, une par semaine), puis « Enregistrer ».</li>
+      <li>Indiquez l'anniversaire sur sa fiche. Pour ajouter ou retirer un prescripteur : « Prescripteurs ».</li>
+    </ol>
+    <div class="mu">Votre lien est personnel : ne le partagez pas. Pendant une maintenance, la saisie peut être fermée.</div>
+  </div>
+  <button class="btn" id="bCode" onclick="demanderCodeUi()">Recevoir mon code</button>
+  <div id="zoneCode" style="display:none">
+    <label class="l">Code à 6 chiffres</label>
+    <input id="code" inputmode="numeric" maxlength="6" placeholder="Code à 6 chiffres">
+    <button class="btn" id="bValider" onclick="validerCodeUi(this)">Valider le code</button>
+  </div>`,'');
+  if(msg)alerte(msg);
+}
+let MINUTERIE_CODE=null;
+function lancerMinuterieCode(){
+  clearTimeout(MINUTERIE_CODE);
+  MINUTERIE_CODE=setTimeout(()=>renouvelerCodeAuto(),600000);
+}
+async function renouvelerCodeAuto(){
+  if(!document.getElementById('zoneCode'))return;
+  try{
+    const r=await rpc('demanderCode',JETON);
+    alerte('Votre code a expiré. Un nouveau code vient d\'être envoyé à '+r.masque+'.','ok');
+    lancerMinuterieCode();
+  }catch(e){alerte(e.message)}
+}
+async function demanderCodeUi(){
+  const b=document.getElementById('bCode');b.disabled=true;
+  try{const r=await rpc('demanderCode',JETON);document.getElementById('zoneCode').style.display='block';
+    alerte('Code envoyé à '+r.masque+'.','ok');lancerMinuterieCode()}
+  catch(e){alerte(e.message)}finally{b.disabled=false}
+}
+async function validerCodeUi(bouton){
+  const code=(document.getElementById('code')||{value:''}).value.trim();
+  if(!/^\d{6}$/.test(code)){alerte('Saisissez les 6 chiffres du code reçu par e-mail.','warn');return}
+  if(bouton){bouton.disabled=true;bouton.textContent='Vérification…'}
+  alerte('Vérification du code en cours…','warn');
+  try{
+    const r=await rpc('verifierCode',JETON,code);
+    S.sess=r.sess;S.role=r.role;S.nom=r.nom;S.cle=r.cle;
+    sauverSession();
+    clearTimeout(MINUTERIE_CODE);
+    alerte('Connexion réussie. Chargement de vos données…','ok');
+    await ouvrirAccueil();
+  }catch(e){
+    if(bouton&&document.body.contains(bouton)){bouton.disabled=false;bouton.textContent='Valider le code'}
+    if(String(e.message).indexOf('expiré')>=0)alerte('Votre code a expiré. Cliquez sur « Recevoir mon code » pour en recevoir un nouveau.','warn');
+    else alerte(e.message||'Erreur inconnue. Réessayez.');
+  }
+}
+async function ouvrirAccueil(){
+  alerte('Chargement de vos données…','warn');
+  const c=await rpc('getContexte',S.sess);
+  S.role=c.role;S.nom=c.nom;S.cle=c.cle;S.proprio=!!c.proprio;
+  S.annees=c.annees;S.version=c.version;S.saisie=c.saisieOuverte;S.saisieGlobale=c.saisieGlobale;S.msgSaisie=c.messageSaisie;
+  if(c.annees.length)S.annee=c.annees[c.annees.length-1];
+  await chargerTout();ecranAccueil();
+  S.forCible='';
+  setTimeout(prechargerVues,2000);
+}
+
+/* Charge en arrière-plan les onglets Communications, Forfaits et Demandes,
+   pour qu'ils s'affichent sans attente au premier clic. N'écrase jamais une donnée déjà présente. */
+function prechargerVues(){
+  const taches=[
+    ['com',()=>rpc('getCommunications',S.sess)],
+    ['for',async()=>{const [f,tab]=await Promise.all([rpc('getForfaitForm',S.sess),rpc('getForfaits',S.sess).catch(()=>null)]);return {f:f,tab:tab}}],
+    ['dem',async()=>{const [demandes,nb]=await Promise.all([rpc('getDemandes',S.sess),rpc('compterDemandesEnAttente',S.sess)]);return {demandes:demandes,nb:nb}}]
+  ];
+  taches.forEach(([vue,fn])=>{
+    if(DERNIER[vue]!==undefined)return;
+    fn().then(d=>{if(DERNIER[vue]===undefined)DERNIER[vue]=d}).catch(()=>{});
+  });
+}
+
+/* ============ Calculs à partir des prescripteurs visibles ============ */
+function classeDe(p){const m=String(p.classe||'').match(/\b([ABC])\b/);return m?m[1]:'AUTRE'}
+function statsDe(rows,mois){
+  const st={visitesMois:0,visitesAnnee:0,total:rows.length,classes:{A:0,B:0,C:0,AUTRE:0},
+    parMois:{A:Array(12).fill(0),B:Array(12).fill(0),C:Array(12).fill(0)},semaines:{},anniv:[],delegues:{}};
+  rows.forEach(p=>{
+    const k=classeDe(p);st.classes[k]++;
+    const d=st.delegues[p.cle]=st.delegues[p.cle]||{cle:p.cle,delegue:p.delegue,zone:new Set(),nb:0,visites:0};
+    d.nb++;d.zone.add(p.zone);
+    p.mois.forEach((v,m)=>{
+      nbDates(v).forEach(iso=>{
+        st.visitesAnnee++;d.visites++;
+        if(k!=='AUTRE')st.parMois[k][m]++;
+        if(mois===-1||m===mois)st.visitesMois++;
+        if(mois>=0&&m===mois){
+          const sk=lundi(iso);const w=st.semaines[sk]=st.semaines[sk]||{A:0,B:0,C:0,total:0};
+          if(k!=='AUTRE')w[k]++;w.total++;
+        }
+      });
+    });
+    if(p.anniv){const dans=joursAvant(p.anniv);if(dans<=30)st.anniv.push({nom:p.nom,date:p.anniv,dans:dans})}
+  });
+  st.anniv.sort((a,b)=>a.dans-b.dans);
+  return st;
+}
+function graphe(pm){
+  const g=40,top=18,base=212,H=250,sl=58,bw=10,gap=2,W=g+12*sl+10;
+  const max=Math.max(0,...pm.A,...pm.B,...pm.C);
+  const haut=Math.max(10,Math.ceil(max/2)*2);
+  const step=haut/5;
+  const Y=v=>base-(base-top)*v/haut;
+  const col={A:'var(--A)',B:'var(--B)',C:'var(--C)'};
+  let s=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Visites par mois et par classe">`;
+  for(let k=0;k<=5;k++){
+    const v=step*k,y=Y(v);
+    s+=`<line x1="${g}" x2="${W-10}" y1="${y}" y2="${y}" stroke="#888780" stroke-opacity=".35"/>`;
+    s+=`<text x="${g-10}" y="${y+4}" font-size="12" text-anchor="end">${v}</text>`;
+  }
+  for(let i=0;i<12;i++){
+    const x0=g+i*sl+(sl-(3*bw+2*gap))/2;
+    ['A','B','C'].forEach((k,j)=>{
+      const v=pm[k][i],x=x0+j*(bw+gap),y=Y(v);
+      if(v>0)s+=`<rect x="${x}" y="${y}" width="${bw}" height="${base-y}" rx="2" fill="${col[k]}"/>`;
+      s+=`<text x="${x+bw/2}" y="${y-5}" font-size="11" text-anchor="middle">${v}</text>`;
+      s+=`<text x="${x+bw/2}" y="${base+16}" font-size="11" font-weight="bold" text-anchor="middle" style="fill:${col[k]}">${k}</text>`;
+    });
+    s+=`<text x="${g+i*sl+sl/2}" y="${base+38}" font-size="12" text-anchor="middle">${MOIS[i]}</text>`;
+  }
+  return s+'</svg>';
+}
+function blocStats(st){
+  const cards=[[st.visitesMois,S.mois<0?'Visites de l\'année':'Visites du mois'],[st.visitesAnnee,'Visites '+S.annee],
+    [st.total,'Prescripteurs'],[st.classes.A,'Classe A',"var(--A)"],[st.classes.B,'Classe B',"var(--B)"],[st.classes.C,'Classe C',"var(--C)"]];
+  let s=`<div class="st-grid" style="margin:8px 0">${cards.map(x=>`<div class="st"><b style="${x[2]?'color:'+x[2]:''}">${x[0]}</b><span>${h(x[1])}</span></div>`).join('')}</div>`;
+  if(S.mois>=0){
+    s+=`<h2>Visites par semaine</h2><table><tr><th>Semaine</th><th style="color:var(--A)">A</th><th style="color:var(--B)">B</th><th style="color:var(--C)">C</th><th>Total</th></tr>`;
+    s+=semainesMois(S.annee,S.mois).map((w,i)=>{const x=st.semaines[w.cle]||{A:0,B:0,C:0,total:0};
+      return `<tr><td>Sem. ${i+1} (${jj(w.jours[0])}–${jj(w.jours[w.jours.length-1])})</td><td>${x.A}</td><td>${x.B}</td><td>${x.C}</td><td>${x.total}</td></tr>`}).join('');
+    s+=`</table>`;
+  }
+  s+=`<h2>Évolution des visites par classe</h2><div class="mu">Année ${S.annee} · ${st.visitesAnnee} visite(s)</div>`;
+  s+=`<div class="card" style="overflow-x:auto;padding:6px;margin-top:6px">${graphe(st.parMois)}</div>`;
+  s+=`<div class="mu" style="display:flex;gap:12px;flex-wrap:wrap"><span style="color:var(--A)">● Classe A : ${sum(st.parMois.A)}</span><span style="color:var(--B)">● Classe B : ${sum(st.parMois.B)}</span><span style="color:var(--C)">● Classe C : ${sum(st.parMois.C)}</span></div>`;
+  return s;
+}
+function listeAnniv(st){
+  if(!st.anniv.length)return '<div class="mu">Aucun anniversaire dans les 30 prochains jours.</div>';
+  return st.anniv.map(a=>`<div class="mu">${h(a.nom)} — ${h(a.date)} (${a.dans===0?'aujourd\'hui':'dans '+a.dans+' j'})</div>`).join('');
+}
+function selAnnee(){return `<label class="l">Année</label><select onchange="S.annee=+this.value;rafraichir(rendre)">${
+  (S.annees.length?S.annees:[S.annee]).map(a=>`<option value="${a}" ${a===S.annee?'selected':''}>${a}</option>`).join('')}</select>`}
+function selMois(){return `<label class="l">Période</label><select onchange="S.mois=+this.value;rendre()"><option value="-1" ${S.mois<0?'selected':''}>Toute l'année</option>${
+  MOIS_LONG.map((m,i)=>`<option value="${i}" ${i===S.mois?'selected':''}>${m}</option>`).join('')}</select>`}
+function selDelegue(){
+  if(S.role==='delegue')return '';
+  const cles=[...new Set(S.pres.map(p=>p.cle))].sort();
+  const nom=c=>(S.pres.find(x=>x.cle===c)||{}).delegue||c;
+  return `<label class="l">Délégué</label><select onchange="S.choixCle=this.value;rendre()"><option value="">Tous les délégués</option>${
+    cles.map(c=>`<option value="${h(c)}" ${c===S.choixCle?'selected':''}>${h(nom(c))}</option>`).join('')}</select>`;
+}
+
+/* ============ Tableau de bord ============ */
+function ecranAccueil(){
+  S.vue='accueil';
+  const st=statsDe(filtrer(S.pres),S.mois);
+  ecran(`<h1>Tableau de bord</h1>
+    ${blocSaisie()}
+    <div class="grid2"><div>${selAnnee()}</div><div>${selMois()}</div></div>
+    ${selDelegue()}
+    <div class="mu" style="margin:6px 0">${h(periode())} · ${h(libelleDelegue())}</div>
+    ${blocStats(st)}
+    <h2>Anniversaires à venir (30 jours)</h2>${listeAnniv(st)}
+    <button class="btn sec" onclick="ecranDemandes()">Demandes à valider (${S.nbDem})</button>`,'accueil');
+}
+
+/* ============ Prescripteurs ============ */
+function ecranPres(){
+  S.vue='pres';
+  ecran(`<h1>Prescripteurs</h1>${selDelegue()}
+    <button class="btn sec" onclick="ecranGestion()">Gérer les prescripteurs (ajout, modification, suppression)</button>
+    <input id="q" placeholder="Rechercher un prescripteur" oninput="majListe(this.value)" style="margin-top:8px">
+    <div id="liste"></div>`,'pres');
+  majListe('');
+}
+function majListe(q){
+  const t=(q||'').toLowerCase();
+  const rows=filtrer(S.pres).filter(p=>!t||(p.nom+' '+p.zone+' '+p.spec).toLowerCase().indexOf(t)>=0);
+  const vis=rows.filter(p=>p.total>0),non=rows.filter(p=>p.total===0);
+  document.getElementById('liste').innerHTML=`<h2>Visités (${vis.length})</h2><div class="grille">${vis.map(itemPres).join('')}</div>
+    <h2>Non encore visités (${non.length})</h2><div class="grille">${non.map(itemPres).join('')}</div>`;
+}
+function itemPres(p){
+  return `<div class="it" onclick="ecranFiche('${h(p.id)}')"><b style="font-weight:500">${h(p.nom)}</b>
+    <small>${h(p.zone)} · ${h(p.spec)} · classe ${h(p.classe)}</small>
+    <small>${p.total} visite(s)${p.anniv?' · anniv. '+h(p.anniv):''}</small></div>`;
+}
+function optClasse(v){return ['','A','B','C'].map(x=>`<option value="${x}" ${x===v?'selected':''}>${x||'Choisir'}</option>`).join('')}
+function optJour(v){let s='<option value="0">Jour</option>';for(let i=1;i<=31;i++)s+=`<option value="${i}" ${i===v?'selected':''}>${i}</option>`;return s}
+function optMois(v){let s='<option value="0">Mois</option>';MOIS_LONG.forEach((m,i)=>{s+=`<option value="${i+1}" ${i+1===v?'selected':''}>${m}</option>`});return s}
+
+function ecranFiche(id){
+  S.vue='pres';
+  const p=S.pres.find(x=>x.id===id);
+  if(!p){ecranPres();return}
+  S.fiche=p;
+  const [aj,am]=parseAnniv(p.anniv);
+  const lignes=[['Délégué',p.delegue],['Zone',p.zone],['Équipe',p.equipe],['Superviseur',p.sup],['Spécialité',p.spec],
+    ['Classe',p.classe],['Hôpital / clinique',p.hop],['Produits',p.produits],['Visites (total)',p.total],['Téléphone',p.tel]];
+  ecran(`<button class="btn sec inl" onclick="ecranPres()">← Retour</button>
+    <h1>${h(p.nom)}</h1>
+    <div class="card">${lignes.map(x=>`<div class="ln"><span>${x[0]}</span><b style="font-weight:500">${h(x[1]||'-')}</b></div>`).join('')}</div>
+    <div class="card"><label class="l">Anniversaire (jour et mois)</label>
+      <div class="grid2"><select id="f-aj">${optJour(aj)}</select><select id="f-am">${optMois(am)}</select></div>
+      <button class="btn sec" onclick="enregistrerAnniv()" ${S.saisie?'':'disabled'}>Enregistrer l'anniversaire</button></div>
+    <h2>Visites par mois</h2>
+    <div class="grid2">${MOIS_LONG.map((m,i)=>`<div class="cr"><b style="font-weight:500">${MOIS[i]}</b><div class="mu">${nbDates(p.mois[i]).length} visite(s)</div></div>`).join('')}</div>
+    <h2>Calendrier des visites</h2>
+    <label class="l">Mois</label>
+    <select id="cm">${MOIS_LONG.map((m,i)=>`<option value="${i}" ${i===(S.mois<0?new Date().getMonth():S.mois)?'selected':''}>${m}</option>`).join('')}</select>
+    <button class="btn" onclick="ecranCalendrier(+document.getElementById('cm').value)">Ouvrir le calendrier</button>`,'pres');
+}
+async function enregistrerAnniv(){
+  const id=S.fiche.id;
+  const j=+document.getElementById('f-aj').value,m=+document.getElementById('f-am').value;
+  try{
+    const valeur=await rpc('enregistrerAnniversaireApp',S.sess,S.annee,S.fiche.ligne,j,m);
+    const p=S.pres.find(x=>x.id===id);
+    if(p)p.anniv=valeur||'';
+    ecranFiche(id);alerte(valeur?'Anniversaire enregistré.':'Anniversaire effacé.','ok');
+  }catch(e){alerte(e.message)}
+}
+
+/* Calendrier : un jour par semaine, lundi à vendredi. Toucher un autre jour de la même semaine le remplace. */
+function ecranCalendrier(m){
+  S.vue='pres';
+  const p=S.fiche;
+  S.calCtx={id:p.id,m:m};S.cal=nbDates(p.mois[m]).slice();
+  ecran(`<button class="btn sec inl" onclick="ecranFiche('${h(p.id)}')">← Retour</button>
+    <h1>${MOIS_LONG[m]} ${S.annee} — ${h(p.nom)}</h1>
+    <div class="mu">Lundi à vendredi uniquement, une visite par semaine.</div>
+    <div id="calbox" style="margin-top:8px"></div>
+    <div class="mu" id="couv" style="margin-top:8px"></div>
+    <button class="btn" id="bSave" onclick="enregistrerCal()" ${S.saisie?'':'disabled'}>Enregistrer</button>`,'pres');
+  rendreCal();
+}
+function rendreCal(){
+  const m=S.calCtx.m,sem=semainesMois(S.annee,m);
+  let html='<div class="cal">'+JOURS.map(j=>`<span class="lb">${j}</span>`).join('')+'</div>';
+  sem.forEach(w=>{
+    html+='<div class="cal" style="margin-top:4px">'+[0,1,2,3,4].map(d=>{
+      const dt=new Date(w.cle+'T00:00:00Z');dt.setUTCDate(dt.getUTCDate()+d);
+      const iso=dt.toISOString().slice(0,10);
+      if(iso.slice(0,7)!==S.annee+'-'+p2(m+1))return '<span></span>';
+      const on=S.cal.indexOf(iso)>=0;
+      return `<button class="${on?'sel':''}" onclick="toggleJour('${iso}')">${jj(iso)}</button>`;
+    }).join('')+'</div>';
+  });
+  document.getElementById('calbox').innerHTML=html;
+  const cov=sem.filter(w=>S.cal.some(x=>lundi(x)===w.cle)).length;
+  document.getElementById('couv').textContent=cov+' / '+sem.length+' semaine(s) couverte(s)';
+}
+function toggleJour(iso){
+  if(S.cal.indexOf(iso)>=0){S.cal=S.cal.filter(x=>x!==iso)}
+  else{const k=lundi(iso);S.cal=S.cal.filter(x=>lundi(x)!==k).concat([iso])}
+  rendreCal();
+}
+async function enregistrerCal(){
+  const id=S.calCtx.id,m=S.calCtx.m;
+  const p=S.pres.find(x=>x.id===id);
+  try{
+    const valeur=await rpc('enregistrerDatesApp',S.sess,S.annee,p.ligne,m,S.cal.slice().sort());
+    p.mois[m]=valeur||'';
+    p.total=p.mois.reduce((t,v)=>t+nbDates(v).length,0);
+    ecranFiche(id);alerte('Visites enregistrées pour '+MOIS_LONG[m]+'.','ok');
+  }catch(e){alerte(e.message)}
+}
+
+/* ============ Gestion : ajout, modification, suppression (demandes) ============ */
+function ecranGestion(){
+  S.vue='pres';
+  const cle=cleCible();
+  if(!cle){ecran(`<h1>Gérer les prescripteurs</h1>${selDelegue()}<div class="msg warn">Choisissez d'abord un délégué ci-dessus.</div>`,'pres');return}
+  const mes=S.pres.filter(p=>p.cle===cle);
+  const modes=[['AJOUT','Ajouter'],['MODIF','Modifier'],['SUPP','Supprimer']];
+  ecran(`<button class="btn sec inl" onclick="ecranPres()">← Retour</button>
+    <h1>Prescripteurs de ${h(libelleDelegue())}</h1>
+    <div class="seg">${modes.map(m=>`<button class="${S.mode===m[0]?'on':''}" onclick="S.mode='${m[0]}';ecranGestion()">${m[1]}</button>`).join('')}</div>
+    <div class="mu" style="color:var(--warn)">Vos demandes sont validées par votre superviseur ou l'administrateur.</div>
+    ${S.mode==='AJOUT'?formAjout():S.mode==='MODIF'?formModif(mes):formSupp(mes)}`,'pres');
+}
+function champ(c,lib,val,extra){const v=h(val||'');
+  return `<label class="l">${lib}</label><input data-c="${c}" data-o="${v}" value="${v}" oninput="marquer(this)" ${extra||''}>`}
+function marquer(el){el.classList.toggle('chg',el.value!==el.dataset.o)}
+function formAjout(){
+  const zs=[...new Set(S.pres.map(p=>p.zone))].filter(Boolean).sort();
+  const ref=S.pres[0]||{};
+  return `<div class="card">
+    <div class="cr mu" style="margin-bottom:8px">Équipe ${h(ref.equipe||'-')} · Délégué ${h(libelleDelegue())} · Superviseur ${h(ref.sup||'-')}</div>
+    ${champ('nom','Nom et prénom du prescripteur *','','placeholder="Ex. KOUASSI AMANI"')}
+    <label class="l">Zone *</label>
+    <select data-c="zone"><option value="">Choisir la zone</option>${zs.map(z=>`<option>${h(z)}</option>`).join('')}</select>
+    ${champ('zoneAutre','Autre zone (si absente de la liste)','','placeholder="Autre zone"')}
+    ${champ('spec','Spécialité','','placeholder="Ex. CARDIO, MG, IDE"')}
+    ${champ('hop','Hôpital / Polyclinique / Clinique','','placeholder="Ex. CLINIQUE EXEMPLE"')}
+    <label class="l">Classe de docteur</label><select data-c="classe">${optClasse('')}</select>
+    ${champ('p1','Produit focus','')}${champ('p2','Produit de rappel','')}${champ('p3','Produit prescrit','')}
+    ${champ('tel','Numéro de portable','','inputmode="tel" placeholder="Ex. 0707000000"')}
+    <label class="l">Anniversaire</label>
+    <div class="grid2"><select id="f-aj">${optJour(0)}</select><select id="f-am">${optMois(0)}</select></div>
+    <div class="mu">Le nombre de visites est calculé à partir des dates saisies (0 à la création).</div>
+    <button class="btn" onclick="envoyerAjout()">Envoyer la demande d'ajout</button></div>`;
+}
+function formModif(mes){
+  if(!mes.length)return '<div class="mu">Aucun prescripteur pour ce délégué.</div>';
+  const id=mes.some(p=>p.id===S.modifId)?S.modifId:mes[0].id;
+  const p=mes.find(x=>x.id===id);
+  const zs=[...new Set(S.pres.map(x=>x.zone))].filter(Boolean).sort();
+  const pr=(p.produits||'').split(' / ');
+  const [aj,am]=parseAnniv(p.anniv);
+  return `<div class="card">
+    <label class="l">Prescripteur</label>
+    <select id="mid" onchange="S.modifId=this.value;ecranGestion()">${mes.map(x=>`<option value="${h(x.id)}" ${x.id===id?'selected':''}>${h(x.nom)}</option>`).join('')}</select>
+    <div class="mu">Les champs modifiés sont en bleu. Seuls les changements partent au validateur.</div>
+    ${champ('nom','Nom et prénom',p.nom)}
+    <label class="l">Zone</label>
+    <select data-c="zone" data-o="${h(p.zone)}" onchange="marquer(this)">${zs.map(z=>`<option ${z===p.zone?'selected':''}>${h(z)}</option>`).join('')}</select>
+    ${champ('zoneAutre','Autre zone (si absente de la liste)','','placeholder="Autre zone"')}
+    ${champ('spec','Spécialité',p.spec)}
+    ${champ('hop','Hôpital / Polyclinique / Clinique',p.hop)}
+    <label class="l">Classe de docteur</label><select data-c="classe" data-o="${h(p.classe)}" onchange="marquer(this)">${optClasse(p.classe)}</select>
+    ${champ('p1','Produit focus',pr[0]||'')}${champ('p2','Produit de rappel',pr[1]||'')}${champ('p3','Produit prescrit',pr[2]||'')}
+    ${champ('tel','Numéro de portable',p.tel)}
+    <label class="l">Anniversaire</label>
+    <div class="grid2"><select id="f-aj">${optJour(aj)}</select><select id="f-am">${optMois(am)}</select></div>
+    <button class="btn" onclick="envoyerModif()">Envoyer la demande de modification</button></div>`;
+}
+function formSupp(mes){
+  if(!mes.length)return '<div class="mu">Aucun prescripteur pour ce délégué.</div>';
+  return `<div class="card"><label class="l">Prescripteur à retirer de la liste</label>
+    <select id="mid">${mes.map(x=>`<option value="${h(x.id)}">${h(x.nom)} (${h(x.zone)})</option>`).join('')}</select>
+    <div class="mu">Le prescripteur est retiré de la liste après validation. Ses visites déjà enregistrées restent dans l'historique.</div>
+    <button class="btn ko" onclick="envoyerSupp()">Envoyer la demande de suppression</button></div>`;
+}
+function lireForm(){
+  const o={};
+  document.querySelectorAll('[data-c]').forEach(e=>{o[e.dataset.c]=e.value.trim()});
+  const j=+(document.getElementById('f-aj')||{value:0}).value,m=+(document.getElementById('f-am')||{value:0}).value;
+  o.anniv=j&&m?p2(j)+'/'+p2(m):'';
+  o.produits=[o.p1,o.p2,o.p3].filter(Boolean).join(' / ');
+  o.nom=up(o.nom);o.spec=up(o.spec);o.hop=up(o.hop);o.zone=up(o.zone);o.zoneAutre=up(o.zoneAutre);o.classe=up(o.classe);
+  return o;
+}
+async function envoyer(action,presc){
+  try{
+    const r=await rpc('soumettreDemande',S.sess,action,cleCible(),presc);
+    await chargerTout();ecranGestion();alerte(r.message,'ok');
+  }catch(e){alerte(e.message)}
+}
+async function envoyerAjout(){
+  const o=lireForm();
+  await envoyer('AJOUT',{nom:o.nom,zone:o.zoneAutre||o.zone,zoneAutre:o.zoneAutre,spec:o.spec,classe:o.classe,hop:o.hop,tel:o.tel,produits:o.produits,anniv:o.anniv});
+}
+async function envoyerModif(){
+  const id=document.getElementById('mid').value;
+  const p=S.pres.find(x=>x.id===id);
+  const o=lireForm();
+  o.zone=o.zoneAutre||o.zone;
+  const ch={};
+  CHAMPS_FORM.forEach(c=>{const nv=o[c]||'';if(nv!==String(p[c]||'')&&!(c==='zone'&&!nv))ch[c]=nv});
+  if(!Object.keys(ch).length){alerte('Aucune modification à envoyer.');return}
+  await envoyer('MODIFICATION',{id:id,changes:ch});
+}
+async function envoyerSupp(){
+  await envoyer('SUPPRESSION',{id:document.getElementById('mid').value});
+}
+
+/* ============ Demandes ============ */
+async function ecranDemandes(){
+  await afficherVue('dem',async()=>{
+    const [demandes,nb]=await Promise.all([rpc('getDemandes',S.sess),rpc('compterDemandesEnAttente',S.sess)]);
+    return {demandes:demandes,nb:nb};
+  },d=>{
+    S.demandes=d.demandes;S.nbDem=d.nb;
+    ecran(`<h1>Demandes</h1>${d.demandes.length?'':'<div class="mu">Aucune demande.</div>'}${d.demandes.map(itemDemande).join('')}`,'dem');
+  });
+}
+function itemDemande(d){
+  const t={AJOUT:['Ajout','pa'],SUPPRESSION:['Suppression','ps'],MODIFICATION:['Modification','pm']}[d.action]||['Demande',''];
+  const lignes=d.changements.map(c=>`<div class="ln"><span>${h(LIB[c.champ]||c.champ)}</span>
+    <b style="font-weight:500"><s class="mu">${h(c.avant||'-')}</s> → ${h(c.apres||'-')}</b></div>`).join('');
+  const fiche=d.action==='AJOUT'?`<div class="mu">Zone ${h(d.zone)} · ${h(d.spec)} · classe ${h(d.classe)} · ${h(d.tel)} · ${h(d.hop)}</div>`:'';
+  const boutons=d.peutDecider?`<button class="btn ok inl" onclick="decider('${h(d.id)}',true)">Valider</button><button class="btn ko inl" onclick="decider('${h(d.id)}',false)">Refuser</button>`:'';
+  return `<div class="card"><span class="pill ${t[1]}">${t[0]}</span><b style="font-weight:500">${h(d.nom||d.id)}</b>
+    <div class="mu">Demandé par ${h(d.demandeur)} (${h(d.role)}) le ${h(d.date)} · réf. ${h(d.id)}</div>${fiche}${lignes}
+    <div class="mu">Statut : ${h(d.statut)}${d.valideur?' · par '+h(d.valideur):''}</div>${boutons}</div>`;
+}
+async function decider(id,ok){
+  try{
+    await rpc('decider',S.sess,id,ok);
+    delete DERNIER.dem;
+    await chargerTout();await ecranDemandes();alerte(ok?'Demande validée.':'Demande refusée.','ok');
+  }catch(e){alerte(e.message)}
+}
+
+/* ============ Équipe (superviseur et administrateur) ============ */
+function choisirSup(i){S.supChoisi=S.sups[i]||'';ecranEquipe()}
+function ecranEquipe(){
+  S.vue='equipe';
+  const rows=S.supChoisi?S.pres.filter(p=>p.sup===S.supChoisi):S.pres;
+  const st=statsDe(rows,S.mois);
+  const dels=Object.values(st.delegues).sort((a,b)=>a.delegue.localeCompare(b.delegue,'fr'));
+  ecran(`<h1>Équipe</h1>
+    <div class="grid2"><div>${selAnnee()}</div><div>${selMois()}</div></div>
+    <h2>Superviseurs (${S.sups.length})</h2>
+    <select onchange="S.supChoisi=this.value;ecranEquipe()">
+      <option value="" ${!S.supChoisi?'selected':''}>Tous les superviseurs (${S.pres.length} prescripteur(s))</option>
+      ${S.sups.map(s=>{const r=S.pres.filter(p=>p.sup===s);
+        return `<option value="${h(s)}" ${S.supChoisi===s?'selected':''}>${h(s)} — ${new Set(r.map(p=>p.cle)).size} délégué(s) · ${r.length} prescripteur(s)</option>`}).join('')}
+    </select>
+    <div class="mu" style="margin:6px 0">${h(periode())} · ${h(S.supChoisi||'Toute l\'équipe')}</div>
+    ${blocStats(st)}
+    <h2>Délégués</h2>
+    ${dels.map(d=>`<div class="it"><b style="font-weight:500">${h(d.delegue)}</b>
+      <small>Zone(s) : ${h([...d.zone].join(', '))}</small><small>${d.nb} prescripteur(s) · ${d.visites} visite(s)</small></div>`).join('')}`,'equipe');
+}
+
+/* ============ Communications ============ */
+async function ecranCommunications(){
+  await afficherVue('com',()=>rpc('getCommunications',S.sess),c=>rendreCommunications(c));
+}
+function rendreCommunications(c){
+  S.com=c;
+  const adm=S.role==='admin'&&!!S.proprio;
+  ecran(`${selComFor('com')}<h1>Communications</h1>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <b style="font-weight:500">Consultation</b>
+      <span class="pill ${c.ouverte?'pa':'ps'}">${c.ouverte?'Ouverte':'Fermée'}</span></div>
+    ${adm?`<div class="card"><b style="font-weight:500">Administrateur</b>
+      <div class="grid2" style="margin-top:6px">
+        <button class="btn ${c.ouverte?'ko':'ok'}" onclick="basculerComm(${!c.ouverte})">${c.ouverte?'Fermer la saisie':'Ouvrir la saisie'}</button>
+        <button class="btn" onclick="ouvrirPublication()">Publier et avertir</button></div>
+      <div class="mu">Publier : les nouveaux fichiers du dossier sont signalés, et un e-mail est envoyé aux équipes concernées.</div></div>`:''}
+    ${c.liste.length?'':'<div class="mu">Aucune communication pour le moment.</div>'}
+    ${c.liste.map(x=>`<div class="it" onclick="ouvrirComm('${h(x.id)}')"><b style="font-weight:500">${h(x.nom)}</b>${x.nouveau?' <span class="pill pm">Nouveau</span>':''}<small>Publié le ${h(x.date)}</small></div>`).join('')}
+    ${c.forfaits&&c.forfaits.length?`<h2>Forfaits</h2><div class="mu">Réponses des personnes que vous pouvez voir.</div>
+    ${c.forfaits.map(x=>`<div class="it"><b style="font-weight:500">${h(x.nom)}</b>
+      <small>${h(x.statut)} · ${h(x.reseau)} · ${h(libMode(x.mode))}</small>
+      <small>${fr(x.montant)} CFA${x.date?' · '+h(x.date):''}</small></div>`).join('')}`:''}
+    <div id="comm-contenu"></div>`,'com');
+}
+async function basculerComm(ouvert){
+  try{
+    await rpc('setCommunicationsOuvertes',S.sess,ouvert);
+    delete DERNIER.com;
+    await ecranCommunications();
+    alerte(ouvert?'Saisie des communications ouverte.':'Saisie des communications fermée.','ok');
+  }catch(e){alerte(e.message)}
+}
+async function ouvrirPublication(){
+  try{
+    const r=await rpc('getFichiersEnAttente',S.sess);
+    S.attente=r;
+    if(!r.fichiers.length){
+      alerte(r.ignores.length?'Aucun nouveau fichier lisible. Non lisibles : '+r.ignores.join(', ')+'.':'Aucun nouveau fichier à publier.','warn');
+      return;
+    }
+    document.getElementById('comm-contenu').innerHTML=panneauPublication(r);
+  }catch(e){alerte(e.message)}
+}
+function panneauPublication(r){
+  return `<div class="card" style="background:var(--accbg)"><b style="font-weight:500">Publier une communication</b>
+    <div class="mu">Cochez les équipes à avertir et à rendre visibles pour chaque fichier.</div>
+    ${r.fichiers.map((f,i)=>`<div class="card" style="margin:8px 0 0">
+      <b style="font-weight:500">${h(f.nom)}</b><div class="mu">${f.type==='TABLEAU'?'Tableau':'Texte'}</div>
+      <label class="l"><input type="checkbox" data-toutes="${i}" onchange="cocherToutes(${i},this.checked)" style="width:auto;height:auto;margin-right:6px">Toutes les équipes</label>
+      ${r.equipes.map(e=>`<label class="l"><input type="checkbox" data-f="${i}" data-eq="${h(e)}" style="width:auto;height:auto;margin-right:6px">${h(e)}</label>`).join('')}
+    </div>`).join('')}
+    ${r.ignores.length?`<div class="mu" style="margin-top:8px">Non publiables (format non lisible) : ${h(r.ignores.join(', '))}</div>`:''}
+    <div class="grid2" style="margin-top:10px">
+      <button class="btn sec" onclick="document.getElementById('comm-contenu').innerHTML=''">Annuler</button>
+      <button class="btn" onclick="validerPublication()">Publier et avertir la sélection</button>
+    </div></div>`;
+}
+function cocherToutes(i,on){
+  document.querySelectorAll(`input[data-f="${i}"][data-eq]`).forEach(c=>c.checked=on);
+}
+async function validerPublication(){
+  const choix=S.attente.fichiers.map((f,i)=>({
+    id:f.id,
+    toutes:!!document.querySelector(`input[data-toutes="${i}"]`).checked,
+    equipes:[...document.querySelectorAll(`input[data-f="${i}"][data-eq]:checked`)].map(c=>c.dataset.eq)
+  })).filter(c=>c.toutes||c.equipes.length);
+  if(!choix.length){alerte('Cochez au moins une équipe pour un fichier au moins.');return}
+  try{
+    const r=await rpc('publierCommunications',S.sess,choix);
+    delete DERNIER.com;
+    await ecranCommunications();
+    let t=r.publies.length?r.publies.length+' communication(s) publiée(s). Les équipes cochées ont été averties.':'Aucune communication publiée.';
+    if(r.ignores.length)t+=' Non publiées (aucune équipe cochée) : '+r.ignores.join(', ')+'.';
+    alerte(t,'ok');
+  }catch(e){alerte(e.message)}
+}
+
+async function ouvrirComm(idF){
+  try{
+    const d=await rpc('getContenuCommunication',S.sess,idF);
+    document.getElementById('comm-contenu').innerHTML=d.type==='table'?tableauComm(d):
+      `<div class="card"><b style="font-weight:500">${h(d.nom)}</b><div style="white-space:pre-wrap;margin-top:8px">${h(d.texte)}</div></div>`;
+  }catch(e){alerte(e.message)}
+}
+function tableauComm(d){
+  return `<div class="card" style="overflow-x:auto"><b style="font-weight:500">${h(d.nom)}</b>
+    <table style="margin-top:8px"><tr>${d.entetes.map(x=>`<th>${h(x)}</th>`).join('')}</tr>
+    ${d.lignes.map(l=>`<tr>${l.map(x=>`<td>${h(x)}</td>`).join('')}</tr>`).join('')}</table>
+    ${d.lignes.length?'':'<div class="mu">Aucune ligne ne vous concerne dans ce fichier.</div>'}</div>`;
+}
+
+/* ============ Forfaits ============ */
+const MODES_LIB={'REPARTITION':'INTERNET + APPEL (répartition)','APPEL+INTERNET':'APPEL+INTERNET (offre directe)'};
+const libMode=m=>MODES_LIB[m]||m;
+const fr=n=>Number(n||0).toLocaleString('fr-FR');
+async function ecranForfaits(){
+  await afficherVue('for',async()=>{
+    const [f,tab]=await Promise.all([rpc('getForfaitForm',S.sess,S.forCible||''),rpc('getForfaits',S.sess).catch(()=>null)]);
+    return {f:f,tab:tab};
+  },d=>rendreForfaits(d.f,d.tab));
+}
+function rendreForfaits(f,tab){
+  S.ff=f;
+  const tabOk=(f.role==='admin'||f.role==='superviseur')&&tab?tab:null;
+  ecran(`${selComFor('for')}<h1>Forfaits</h1>
+    ${f.ouvert?'':'<div class="msg warn">La saisie des forfaits est fermée. Vous pouvez consulter votre réponse.</div>'}
+    <div class="card">${formForfait(f)}</div>
+    ${tabOk&&f.role==='admin'?adminForfait(tabOk):''}
+    ${tabOk&&f.role==='admin'?listePersonnes(tabOk):''}
+    ${tabOk&&f.role==='superviseur'?tableForfaits(tabOk,false):''}`,'for');
+  if(document.getElementById('fo-reseau'))majModeForfait();
+}
+function changerCibleForfait(v){S.forCible=v;delete DERNIER.for;ecranForfaits()}
+function formForfait(f){
+  const m=f.mine||{};
+  const statut=m.statut||f.prefill;
+  const reseau=m.reseau||Object.keys(f.reseaux)[0];
+  const dis=f.ouvert?'':'disabled';
+  return `<b style="font-weight:500">Mon forfait</b>
+    ${f.role==='admin'&&f.personnes&&f.personnes.length?`<select id="fo-cible" onchange="changerCibleForfait(this.value)" ${dis}>${f.personnes.map(p=>`<option value="${h(p.cle)}" ${p.cle===(f.cible||'')?'selected':''}>${h(p.nom)}${p.role?' ('+h(p.role)+')':''}</option>`).join('')}</select>`:`<div class="mu">${h(f.nom)}</div>`}
+    <label class="l">Statut *</label>
+    <select id="fo-statut" onchange="majMontantForfait()" ${dis}>${f.statuts.map(s=>`<option ${s===statut?'selected':''}>${h(s)}</option>`).join('')}</select>
+    <label class="l">Type de réseau *</label>
+    <select id="fo-reseau" onchange="majModeForfait()" ${dis}>${Object.keys(f.reseaux).map(r=>`<option ${r===reseau?'selected':''}>${h(r)}</option>`).join('')}</select>
+    <label class="l">Mode *</label>
+    <select id="fo-mode" onchange="majMontantForfait()" ${dis}></select>
+    <div id="fo-split" class="grid2" style="display:none">
+      <div><label class="l">Internet (CFA)</label><input id="fo-int" inputmode="numeric" value="${h(m.internet||'')}" oninput="majMontantForfait()" ${dis}></div>
+      <div><label class="l">Appel (CFA)</label><input id="fo-app" inputmode="numeric" value="${h(m.appel||'')}" oninput="majMontantForfait()" ${dis}></div>
+    </div>
+    <label class="l">Numéro de contact *</label>
+    <input id="fo-num" inputmode="tel" value="${h(m.numero||'')}" placeholder="07 00 00 00 00" ${dis}>
+    <div style="margin-top:10px;background:var(--okbg);border-radius:8px;padding:10px;text-align:center">
+      <div class="mu" style="color:var(--ok)">Montant de votre forfait</div>
+      <div id="fo-total" style="font-size:20px;font-weight:500;color:var(--ok)"></div>
+    </div>
+    <button class="btn" onclick="enregistrerForfait()" ${dis}>Enregistrer</button>`;
+}
+function majModeForfait(){
+  const f=S.ff, r=document.getElementById('fo-reseau').value;
+  const modes=f.reseaux[r]||[];
+  const sel=document.getElementById('fo-mode');
+  const prev=sel.value;
+  const choix=modes.indexOf(prev)>=0?prev:(f.mine&&f.mine.reseau===r?f.mine.mode:modes[0]);
+  sel.innerHTML=modes.map(m=>`<option value="${h(m)}" ${m===choix?'selected':''}>${h(libMode(m))}</option>`).join('');
+  majMontantForfait();
+}
+function majMontantForfait(){
+  const f=S.ff;
+  const st=document.getElementById('fo-statut').value;
+  const mode=document.getElementById('fo-mode').value;
+  const total=f.montants[st]||0;
+  document.getElementById('fo-split').style.display=mode==='REPARTITION'?'grid':'none';
+  let txt=fr(total)+' CFA';
+  if(mode==='REPARTITION'){
+    const somme=Number(document.getElementById('fo-int').value||0)+Number(document.getElementById('fo-app').value||0);
+    if(somme!==total)txt+=' (répartition : '+fr(somme)+' / '+fr(total)+')';
+  }
+  document.getElementById('fo-total').textContent=txt;
+}
+async function enregistrerForfait(){
+  const d={statut:document.getElementById('fo-statut').value,reseau:document.getElementById('fo-reseau').value,
+    mode:document.getElementById('fo-mode').value,internet:document.getElementById('fo-int').value,
+    appel:document.getElementById('fo-app').value,numero:document.getElementById('fo-num').value,cible:S.forCible||''};
+  try{
+    const r=await rpc('enregistrerForfait',S.sess,d);
+    delete DERNIER.for;
+    await ecranForfaits();
+    alerte('Forfait enregistré : '+fr(r.montant)+' CFA.','ok');
+  }catch(e){alerte(e.message)}
+}
+function adminForfait(tab){
+  const tot=tab.lignes.reduce((s,x)=>s+x.montant,0);
+  return `<div class="card" style="background:var(--accbg)"><b style="font-weight:500">Administrateur</b>
+    <div class="st-grid" style="margin:8px 0">
+      <div class="st"><b>${tab.lignes.length}</b><span>Réponses</span></div>
+      <div class="st"><b style="color:var(--warn)">${tab.nonRepondus.length}</b><span>Non répondu</span></div>
+      <div class="st"><b>${fr(tot)}</b><span>Total CFA</span></div>
+    </div>
+    <div class="grid2">
+      <button class="btn ${tab.ouvert?'ko':'ok'}" onclick="basculerForfaits(${!tab.ouvert})">${tab.ouvert?'Fermer la saisie':'Ouvrir la saisie'}</button>
+      <button class="btn" onclick="exporterForfaitsUi()">Exporter (Excel)</button>
+    </div></div>`;
+}
+/* Liste de tous les délégués et superviseurs, avec leur réponse (administrateur) */
+let PERS=[];
+function listePersonnes(tab){
+  const p=tab.personnes||[];
+  const rep=p.filter(x=>x.repondu).length;
+  return `<div class="card" style="overflow-x:auto">
+    <div onclick="basculerListePersonnes()" style="cursor:pointer">
+      <b style="font-weight:500">Délégués et superviseurs (${p.length})</b>
+      <div class="mu" style="margin-top:4px">${rep} répondu(s) · ${p.length-rep} non répondu(s)</div>
+    </div>
+    <div id="liste-personnes" style="display:none">
+    <table style="margin-top:8px"><tr><th>Nom</th><th>Rôle</th><th>Superviseur</th><th>Réponse</th></tr>
+    ${p.map(x=>`<tr><td>${h(x.nom)}</td><td>${h(x.role)}</td><td>${h(x.sup||'-')}</td><td>${x.repondu?h(x.statut)+' · '+fr(x.montant)+' CFA':'<span style="color:var(--warn)">Non répondu</span>'}</td></tr>`).join('')}
+    </table></div></div>`;
+}
+function basculerListePersonnes(){
+  const d=document.getElementById('liste-personnes');
+  if(d)d.style.display=d.style.display==='none'?'block':'none';
+}
+function montrerReponseHtml(x){
+  return `<span>Réponse</span><b style="font-weight:500">${x.repondu?h(x.statut)+' · '+fr(x.montant)+' CFA':'<span style="color:var(--warn)">Non répondu</span>'}</b>`;
+}
+function montrerReponse(i){
+  const d=document.getElementById('fo-reponse-detail');
+  if(d&&PERS[+i])d.innerHTML=montrerReponseHtml(PERS[+i]);
+}
+function tableForfaits(tab,adm){
+  return `<div class="card" style="overflow-x:auto"><b style="font-weight:500">${adm?'Toutes les réponses':'Forfaits de mon équipe'}</b>
+    <table style="margin-top:8px"><tr><th>Personne</th><th>Statut</th><th>Réseau</th><th>Mode</th><th>Montant</th></tr>
+    ${tab.lignes.map(x=>`<tr><td>${h(x.nom)}</td><td>${h(x.statut)}</td><td>${h(x.reseau)}</td><td>${h(libMode(x.mode))}</td><td>${fr(x.montant)}</td></tr>`).join('')}
+    </table>
+    ${adm&&tab.nonRepondus.length?`<div class="mu" style="margin-top:8px">Non répondu : ${h(tab.nonRepondus.join(', '))}</div>`:''}</div>`;
+}
+async function basculerForfaits(ouvert){
+  try{await rpc('setForfaitsOuverts',S.sess,ouvert);delete DERNIER.for;await ecranForfaits();alerte(ouvert?'Saisie des forfaits ouverte.':'Saisie des forfaits fermée.','ok')}
+  catch(e){alerte(e.message)}
+}
+async function exporterForfaitsUi(){
+  try{
+    const r=await rpc('exporterForfaits',S.sess);
+    delete DERNIER.for;
+    await ecranForfaits();
+    alerte('Export déposé : '+r.nom+' ('+r.lignes+' réponse(s), '+r.nonRepondus+' non répondu(s)).','ok');
+  }catch(e){alerte(e.message)}
+}
+
+/* ============ Démarrage et actualisation de l'état de la saisie ============ */
+const VUES={accueil:ecranAccueil,pres:ecranPres,dem:ecranDemandes,equipe:ecranEquipe,com:ecranCommunications,for:ecranForfaits};
+function allerHaut(){window.scrollTo({top:0,behavior:'smooth'})}
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY||document.documentElement.scrollTop||0;
+  document.getElementById('haut').classList.toggle('on',y>300);
+});
+setInterval(async()=>{
+  if(!S.sess)return;
+  try{
+    const st=await rpc('getStatutSaisie',S.sess);
+    if(st.saisieGlobale!==S.saisieGlobale||st.saisieOuverte!==S.saisie){S.saisie=st.saisieOuverte;S.saisieGlobale=st.saisieGlobale;S.msgSaisie=st.message;rendre()}
+  }catch(e){}
+},120000);
+demarrer();
+</script>
+</body>
+</html>
