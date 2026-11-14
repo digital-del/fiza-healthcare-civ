@@ -395,7 +395,7 @@ function statsDe(rows,mois){
 function graphe(pm){
   const g=40,top=18,base=212,H=250,sl=58,bw=10,gap=2,W=g+12*sl+10;
   const max=Math.max(0,...pm.A,...pm.B,...pm.C);
-  const haut=Math.max(10,Math.ceil(max/2)*2);
+  const haut=Math.max(5,Math.ceil(max/5)*5);
   const step=haut/5;
   const Y=v=>base-(base-top)*v/haut;
   const col={A:'var(--A)',B:'var(--B)',C:'var(--C)'};
