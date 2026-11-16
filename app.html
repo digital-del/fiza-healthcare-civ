@@ -449,6 +449,14 @@ function selDelegue(){
 }
 
 /* ============ Tableau de bord ============ */
+function basculerVisitesMois(){
+  const d=document.getElementById('visites-mois');
+  const f=document.getElementById('fleche-visites');
+  if(!d)return;
+  const ouvert=d.style.display!=='none';
+  d.style.display=ouvert?'none':'block';
+  if(f)f.textContent=ouvert?'▾':'▴';
+}
 function basculerAnniv(){
   const d=document.getElementById('anniv-liste');
   const f=document.getElementById('fleche-anniv');
@@ -510,8 +518,8 @@ function ecranFiche(id){
     <div class="card"><label class="l">Anniversaire (jour et mois)</label>
       <div class="grid2"><select id="f-aj">${optJour(aj)}</select><select id="f-am">${optMois(am)}</select></div>
       <button class="btn sec" onclick="enregistrerAnniv()" ${S.saisie?'':'disabled'}>Enregistrer l'anniversaire</button></div>
-    <h2>Visites par mois</h2>
-    <div class="grid2">${MOIS_LONG.map((m,i)=>`<div class="cr"><b style="font-weight:500">${MOIS[i]}</b><div class="mu">${nbDates(p.mois[i]).length} visite(s)</div></div>`).join('')}</div>
+    <div onclick="basculerVisitesMois()" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding:8px 0;border-bottom:0.5px solid var(--bd)"><b style="font-size:16px;font-weight:500">Visites par mois</b><span id="fleche-visites" style="color:var(--tx2)">▾</span></div>
+    <div id="visites-mois" style="display:none;margin-top:6px"><div class="grid2">${MOIS_LONG.map((m,i)=>`<div class="cr"><b style="font-weight:500">${MOIS[i]}</b><div class="mu">${nbDates(p.mois[i]).length} visite(s)</div></div>`).join('')}</div></div>
     <h2>Calendrier des visites</h2>
     <label class="l">Mois</label>
     <select id="cm">${MOIS_LONG.map((m,i)=>`<option value="${i}" ${i===(S.mois<0?new Date().getMonth():S.mois)?'selected':''}>${m}</option>`).join('')}</select>
