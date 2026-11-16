@@ -434,7 +434,7 @@ function blocStats(st){
 }
 function listeAnniv(st){
   if(!st.anniv.length)return '<div class="mu">Aucun anniversaire dans les 30 prochains jours.</div>';
-  return st.anniv.map(a=>`<div class="mu">${h(a.nom)} — ${h(a.date)} (${a.dans===0?'aujourd\'hui':'dans '+a.dans+' j'})</div>`).join('');
+  return `<select style="margin-top:6px">${st.anniv.map(a=>`<option>${h(a.nom)} — ${h(a.date)} (${a.dans===0?'aujourd\'hui':'dans '+a.dans+' j'})</option>`).join('')}</select>`;
 }
 function selAnnee(){return `<label class="l">Année</label><select onchange="S.annee=+this.value;rafraichir(rendre)">${
   (S.annees.length?S.annees:[S.annee]).map(a=>`<option value="${a}" ${a===S.annee?'selected':''}>${a}</option>`).join('')}</select>`}
