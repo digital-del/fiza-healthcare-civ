@@ -800,15 +800,29 @@ async function ouvrirPublication(){
   try{
     const r=await rpc('getFichiersEnAttente',S.sess);
     S.attente=r;
-    if(!r.fichiers.length){
-      alerte(r.ignores.length?'Aucun nouveau fichier lisible. Non lisibles : '+r.ignores.join(', ')+'.':'Aucun nouveau fichier à publier.','warn');
-      return;
-    }
     document.getElementById('comm-contenu').innerHTML=panneauPublication(r);
   }catch(e){alerte(e.message)}
 }
+function carteForfaits(r){
+  return `<div class="card" style="background:var(--okbg)"><b style="font-weight:500">Tableau des forfaits (application)</b>
+    <div class="mu">Montants choisis par les délégués dans l'application. Un seul tableau peut être publié.</div>
+    <label class="l"><input type="checkbox" id="fo-toutes" style="width:auto;height:auto;margin-right:6px">Toutes les équipes</label>
+    ${r.equipes.map(e=>`<label class="l"><input type="checkbox" class="fo-eq" data-eq="${h(e)}" style="width:auto;height:auto;margin-right:6px">${h(e)}</label>`).join('')}
+    <button class="btn" onclick="publierForfaitsUi()">Publier le tableau des forfaits</button></div>`;
+}
+async function publierForfaitsUi(){
+  const toutes=document.getElementById('fo-toutes').checked;
+  const equipes=[...document.querySelectorAll('.fo-eq:checked')].map(c=>c.dataset.eq);
+  if(!toutes&&!equipes.length){alerte('Cochez au moins une équipe.');return}
+  try{
+    await rpc('publierTableauForfaits',S.sess,toutes,equipes);
+    delete DERNIER.com;
+    await ecranCommunications();
+    alerte('Tableau des forfaits publié. Les équipes ont été averties.','ok');
+  }catch(e){alerte(e.message)}
+}
 function panneauPublication(r){
-  return `<div class="card" style="background:var(--accbg)"><b style="font-weight:500">Publier une communication</b>
+  return carteForfaits(r)+`<div class="card" style="background:var(--accbg)"><b style="font-weight:500">Publier une communication</b>
     <div class="mu">Cochez les équipes à avertir et à rendre visibles pour chaque fichier.</div>
     ${r.fichiers.map((f,i)=>`<div class="card" style="margin:8px 0 0">
       <b style="font-weight:500">${h(f.nom)}</b><div class="mu">${f.type==='TABLEAU'?'Tableau':'Texte'}</div>
