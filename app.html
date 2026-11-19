@@ -60,7 +60,15 @@ th:first-child,td:first-child{text-align:left}
   .wrap{max-width:1180px}
   .grille{grid-template-columns:repeat(5,minmax(0,1fr))}
 }
-.haut{position:fixed;right:16px;bottom:150px;width:42px;height:42px;border-radius:50%;border:.5px solid var(--bd2);background:var(--s1);color:var(--tx);font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none;z-index:6}
+/* Animation de la rubrique active dans la barre du bas */
+  .bar button{transition:color .25s ease,transform .25s ease}
+  .bar button.on{animation:rubriqueActive .35s ease-out}
+  .bar button.on::before{content:'';display:block;width:28px;height:3px;border-radius:2px;background:var(--acc);margin:0 auto 4px;animation:ligneActive .35s ease-out}
+  .bar button.on svg{transform:scale(1.12);transition:transform .25s ease}
+  .bar button:active{transform:scale(.94)}
+  @keyframes rubriqueActive{from{transform:translateY(5px);opacity:.45}to{transform:translateY(0);opacity:1}}
+  @keyframes ligneActive{from{width:0;opacity:0}to{width:28px;opacity:1}}
+  .haut{position:fixed;right:16px;bottom:150px;width:42px;height:42px;border-radius:50%;border:.5px solid var(--bd2);background:var(--s1);color:var(--tx);font-size:20px;line-height:1;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18);display:none;z-index:6}
 .haut.on{display:block}
 .msg{padding:9px;border-radius:8px;font-size:14px;margin:8px 0}
 .msg.err{background:var(--kobg);color:var(--ko)}
@@ -195,9 +203,10 @@ function barre(v){
   const it=[['accueil','Accueil','ecranAccueil()']];
   if(S.role!=='delegue')it.push(['equipe','Équipe','ecranEquipe()']);
   it.push(['pres','Prescripteurs','ecranPres()'],['dem','Demandes ('+S.nbDem+')','ecranDemandes()'],['com','Communications','ecranCommunications()']);
-  const visibles=it.slice(0,4), extra=it.slice(4);
+  const items=(S.role==='admin'&&!S.proprio)?it.filter(x=>x[0]!=='com'):it;
+  const visibles=items.slice(0,3), extra=items.slice(3);
   const bouton=x=>`<button class="${x[0]===v?'on':''}" onclick="${x[2]}">${icone(x[0])}${x[1]}</button>`;
-  const plus=extra.length?`<button onclick="ouvrirPlus()">${iconePlus()}Plus</button>`:'';
+  const plus=extra.length?`<button class="${extra.some(x=>x[0]===v)?'on':''}" onclick="ouvrirPlus()">${iconePlus()}Plus</button>`:'';
   return `<nav class="bar">${visibles.map(bouton).join('')}${plus}</nav>${extra.length?panneauPlus(extra):''}`;
 }
 function iconePlus(){
@@ -741,15 +750,15 @@ function rendreCommunications(c){
     ${adm?`<div class="card"><b style="font-weight:500">Administrateur</b>
       <div class="grid2" style="margin-top:6px">
         <button class="btn ${c.ouverte?'ko':'ok'}" onclick="basculerComm(${!c.ouverte})">${c.ouverte?'Fermer la saisie':'Ouvrir la saisie'}</button>
-        <button class="btn" onclick="ouvrirPublication()">Publier et avertir</button></div>
-      <div class="mu">Publier : les nouveaux fichiers du dossier sont signalés, et un e-mail est envoyé aux équipes concernées.</div></div>`:''}
+        <button class="btn" onclick="ouvrirPublication()">Publier</button>
+        <button class="btn sec" onclick="ouvrirAvertir()">Avertir</button></div>
+      <div class="mu">Publier : les fichiers du dossier sont mis à disposition des équipes choisies. Avertir : un e-mail est envoyé aux équipes choisies, sans publier de fichier.</div></div>`:''}
     ${c.liste.length?'':'<div class="mu">Aucune communication pour le moment.</div>'}
     ${c.liste.map(x=>`<div class="it" onclick="ouvrirComm('${h(x.id)}')"><b style="font-weight:500">${h(x.nom)}</b>${x.nouveau?' <span class="pill pm">Nouveau</span>':''}<small>Publié le ${h(x.date)}</small></div>`).join('')}
-    ${c.forfaits&&c.forfaits.length?`<h2>Forfaits</h2><div class="mu">Réponses des personnes que vous pouvez voir.</div>
-    ${c.forfaits.map(x=>`<div class="it"><b style="font-weight:500">${h(x.nom)}</b>
-      <small>${h(x.statut)} · ${h(x.reseau)} · ${h(libMode(x.mode))}</small>
-      <small>${fr(x.montant)} CFA${x.date?' · '+h(x.date):''}</small></div>`).join('')}`:''}
     <div id="comm-contenu"></div>`,'com');
+}
+async function avertirComm(idF){
+  try{const r=await rpc('avertirCommunication',S.sess,idF);alerte('Équipes averties pour : '+r.nom,'ok')}catch(e){alerte(e.message)}
 }
 async function basculerComm(ouvert){
   try{
@@ -757,6 +766,34 @@ async function basculerComm(ouvert){
     delete DERNIER.com;
     await ecranCommunications();
     alerte(ouvert?'Saisie des communications ouverte.':'Saisie des communications fermée.','ok');
+  }catch(e){alerte(e.message)}
+}
+async function ouvrirAvertir(){
+  try{
+    const r=await rpc('getFichiersEnAttente',S.sess);
+    document.getElementById('comm-contenu').innerHTML=panneauAvertir(r.equipes);
+  }catch(e){alerte(e.message)}
+}
+function panneauAvertir(equipes){
+  return `<div class="card" style="background:var(--accbg)"><b style="font-weight:500">Avertir les équipes</b>
+    <div class="mu">Un e-mail est envoyé aux délégués et superviseurs cochés. Aucun fichier n'est publié.</div>
+    <label class="l"><input type="checkbox" id="av-toutes" style="width:auto;height:auto;margin-right:6px">Toutes les équipes</label>
+    ${equipes.map(e=>`<label class="l"><input type="checkbox" class="av-eq" value="${h(e)}" style="width:auto;height:auto;margin-right:6px">${h(e)}</label>`).join('')}
+    <label class="l">Message (facultatif)</label>
+    <input id="av-msg" placeholder="Ex. Nouveau tableau disponible">
+    <div class="grid2" style="margin-top:10px">
+      <button class="btn sec" onclick="document.getElementById('comm-contenu').innerHTML=''">Annuler</button>
+      <button class="btn" onclick="validerAvertir()">Envoyer l'avertissement</button>
+    </div></div>`;
+}
+async function validerAvertir(){
+  const toutes=document.getElementById('av-toutes').checked;
+  const equipes=[...document.querySelectorAll('.av-eq:checked')].map(c=>c.value);
+  if(!toutes&&!equipes.length){alerte('Cochez au moins une équipe.');return}
+  try{
+    const r=await rpc('avertirEquipes',S.sess,toutes,equipes,document.getElementById('av-msg').value.trim());
+    document.getElementById('comm-contenu').innerHTML='';
+    alerte('Avertissement envoyé à '+r.destinataires+' personne(s).','ok');
   }catch(e){alerte(e.message)}
 }
 async function ouvrirPublication(){
@@ -781,7 +818,7 @@ function panneauPublication(r){
     ${r.ignores.length?`<div class="mu" style="margin-top:8px">Non publiables (format non lisible) : ${h(r.ignores.join(', '))}</div>`:''}
     <div class="grid2" style="margin-top:10px">
       <button class="btn sec" onclick="document.getElementById('comm-contenu').innerHTML=''">Annuler</button>
-      <button class="btn" onclick="validerPublication()">Publier et avertir la sélection</button>
+      <button class="btn" onclick="validerPublication()">Publier la sélection</button>
     </div></div>`;
 }
 function cocherToutes(i,on){
@@ -812,10 +849,19 @@ async function ouvrirComm(idF){
   }catch(e){alerte(e.message)}
 }
 function tableauComm(d){
+  const ie=d.entetes.findIndex(e=>/EQUIPE/i.test(e));
+  const groupes={};
+  d.lignes.forEach(l=>{const k=ie>=0?(l[ie]||'SANS EQUIPE'):'';(groupes[k]=groupes[k]||[]).push(l)});
+  const ncol=d.entetes.length;
+  let corps='';
+  Object.keys(groupes).sort().forEach(k=>{
+    if(ie>=0)corps+=`<tr><td colspan="${ncol}" style="background:var(--accbg);font-weight:500">${h(k)}</td></tr>`;
+    groupes[k].forEach(l=>{corps+=`<tr>${l.map(x=>`<td>${h(x)}</td>`).join('')}</tr>`});
+  });
   return `<div class="card" style="overflow-x:auto"><b style="font-weight:500">${h(d.nom)}</b>
-    <table style="margin-top:8px"><tr>${d.entetes.map(x=>`<th>${h(x)}</th>`).join('')}</tr>
-    ${d.lignes.map(l=>`<tr>${l.map(x=>`<td>${h(x)}</td>`).join('')}</tr>`).join('')}</table>
-    ${d.lignes.length?'':'<div class="mu">Aucune ligne ne vous concerne dans ce fichier.</div>'}</div>`;
+    <table style="margin-top:8px"><tr>${d.entetes.map(x=>`<th>${h(x)}</th>`).join('')}</tr>${corps}</table>
+    ${d.lignes.length?'':'<div class="mu">Aucune ligne ne vous concerne dans ce fichier.</div>'}
+    ${d.total!=null?`<div style="margin-top:10px;font-weight:500">Montant global : ${fr(d.total)} CFA</div>`:''}</div>`;
 }
 
 /* ============ Forfaits ============ */
